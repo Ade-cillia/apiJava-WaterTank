@@ -81,9 +81,12 @@ public class Tank {
         return residence;
     }
 
+    public void setResidence(Residence residence) {
+        this.residence = residence;
+    }
 
     public List<TankData> getTankData() {
         return tankData;
     }
-
+    
 }

@@ -1,6 +1,9 @@
 package com.example.api;
 
+import com.example.api.dto.UserDTO;
+import com.example.api.models.User;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +23,12 @@ public class ApiApplication {
 
 	@Bean
 	public ModelMapper modelMapper() {
-		return new ModelMapper();
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.addMappings(new PropertyMap<User, UserDTO>() {
+			protected void configure() {
+				map().setResidences(source.getResidences());
+			}
+		});
+		return modelMapper;
 	}
 }

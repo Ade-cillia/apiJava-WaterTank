@@ -1,8 +1,14 @@
 package com.example.api.dto;
 
+import com.example.api.models.Residence;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
+import java.util.List;
 
 public class UserDTO {
 
@@ -31,6 +37,9 @@ public class UserDTO {
 
     @NotNull(message = "The active field cannot be null")
     private boolean active = true;
+
+    private List<Residence> residences;
+
     public UserDTO() {}
     public UserDTO(Long id, @NotNull(message = "The lastName field cannot be null") String lastName, @NotNull(message = "The firstName field cannot be null") String firstName, @NotNull(message = "The email field cannot be null") String email, @NotNull(message = "The phone field cannot be null") String phone, @NotNull(message = "The portable field cannot be null") String portable, @NotNull(message = "The active field cannot be null") boolean active) {
         this.id = id;
@@ -97,4 +106,12 @@ public class UserDTO {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    public List<Residence> getResidences() {
+        return residences;
+    }
+    public void setResidences(List<Residence> residences) {
+        this.residences = residences;
+    }
+
 }

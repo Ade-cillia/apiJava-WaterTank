@@ -136,9 +136,14 @@ public class Residence {
         return user;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public List<Tank> getTanks() {
         return tanks;
     }
+
 
     public List<Weather> getWeathers() {
         return weathers;

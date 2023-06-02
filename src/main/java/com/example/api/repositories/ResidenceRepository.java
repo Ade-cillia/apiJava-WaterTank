@@ -9,4 +9,6 @@ import java.util.List;
 public interface ResidenceRepository extends CrudRepository<Residence, Long> {
     @Override
     List<Residence> findAll();
+
+    List<Residence> findAllByUser(User user);
 }

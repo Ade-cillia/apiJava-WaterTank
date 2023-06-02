@@ -54,14 +54,14 @@ public class UserController {
     }
 
     @GetMapping(value = "/{userId}")
-    public UserDTO getUserById(@PathVariable Long userId) {
-        User user = userService.getUserById(userId);
+    public UserDTO findUserById(@PathVariable Long userId) {
+        User user = userService.findUserById(userId);
         return modelMapper.map(user, UserDTO.class);
     }
 
     @PutMapping(value = "/{userId}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @Valid @RequestBody RegisterDTO userDTO) {
-        User user = userService.getUserById(userId);
+        User user = userService.findUserById(userId);
         modelMapper.map(userDTO, user);
         User updatedUser = userService.updateUser(user);
         UserDTO updatedUserDTO = modelMapper.map(updatedUser, UserDTO.class);

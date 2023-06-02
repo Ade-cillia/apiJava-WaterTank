@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -20,15 +21,15 @@ public class TankData {
     @Column(name = "masse")
     private double mass;
 
-    @NotNull(message = "The creationDate field cannot be null")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "dateCreation")
-    private LocalDateTime creationDate;
+    private LocalDateTime creationDate = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     private Tank tank;
+
 
     public TankData(){}
     public TankData(Long id, double mass, @NotNull(message = "The creationDate field cannot be null") LocalDateTime creationDate) {
@@ -65,4 +66,7 @@ public class TankData {
         return tank;
     }
 
+    public void setTank(Tank tank) {
+        this.tank = tank;
+    }
 }

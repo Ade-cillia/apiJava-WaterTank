@@ -53,7 +53,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUserById(Long userId) {
+    public User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
     }
@@ -109,6 +109,10 @@ public class UserService {
     }
 
     public void deleteUserById(Long userId) {
+
+        if (!userRepository.existsById(userId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId);
+        }
         userRepository.deleteById(userId);
     }
 

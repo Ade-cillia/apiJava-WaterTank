@@ -93,4 +93,7 @@ public class Weather {
         return residence;
     }
 
+    public void setResidence(Residence residence) {
+        this.residence = residence;
+    }
 }

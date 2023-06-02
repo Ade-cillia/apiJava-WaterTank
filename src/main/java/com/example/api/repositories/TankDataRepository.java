@@ -9,4 +9,6 @@ import java.util.List;
 public interface TankDataRepository extends CrudRepository<TankData, Long> {
     @Override
     List<TankData> findAll();
+
+    List<TankData> findAllByTank(Tank tank);
 }
