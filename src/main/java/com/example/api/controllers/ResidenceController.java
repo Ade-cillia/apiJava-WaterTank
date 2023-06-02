@@ -5,6 +5,7 @@ import com.example.api.dto.RegisterDTO;
 import com.example.api.dto.UserDTO;
 import com.example.api.models.Residence;
 import com.example.api.models.User;
+import com.example.api.models.Weather;
 import com.example.api.services.ResidenceService;
 import com.example.api.services.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,13 +24,9 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/residences")
 public class ResidenceController {
     private ResidenceService residenceService;
-    private UserService userService;
-    private ModelMapper modelMapper;
 
-    public ResidenceController(ResidenceService residenceService,UserService userService,ModelMapper modelMapper) {
+    public ResidenceController(ResidenceService residenceService) {
         this.residenceService = residenceService;
-        this.userService = userService;
-        this.modelMapper = modelMapper;
     }
 
     @GetMapping(value = "/")
@@ -38,26 +35,20 @@ public class ResidenceController {
     }
 
     @GetMapping(value = "/{residenceId}")
-    public Residence findUserById(@PathVariable(name = "residenceId", required = false) Residence residence) {
-        if (residence == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Residence not Found");
-        }
+    public Residence findById(@PathVariable Long residenceId) {
+        Residence residence = residenceService.findById(residenceId);
         return residence;
     }
 
     @GetMapping(value = "/user/{userId}")
-    public List<Residence> findResidencesByUser(@PathVariable(name = "userId", required = false) User user) {
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not Found");
-        }
-        return residenceService.findAllByUser(user);
+    public List<Residence> findResidencesByUser(@PathVariable Long userId) {
+        List<Residence> residences = residenceService.findAllByUserId(userId);
+        return residences;
     }
 
     @PostMapping(value = "/user/{userId}")
     public ResponseEntity<Residence> createResidence(@PathVariable Long userId, @Valid @RequestBody Residence residence) {
-        User user = userService.findUserById(userId);
-        residence.setUser(user);
-        Residence createdResidence = residenceService.saveResidence(residence);
+        Residence createdResidence = residenceService.saveResidence(userId,residence);
         return ResponseEntity.ok().body(createdResidence);
     }
 
@@ -69,11 +60,7 @@ public class ResidenceController {
 
     @DeleteMapping(value = "/{residenceId}")
     public ResponseEntity<String> deleteResidenceById(@PathVariable Long residenceId) {
-        try {
-            residenceService.deleteResidenceById(residenceId);
-            return ResponseEntity.ok("Residence successfully deleted");
-        } catch (ResponseStatusException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Residence not found with id: " + residenceId);
-        }
+        residenceService.deleteResidenceById(residenceId);
+        return ResponseEntity.ok("Tank successfully deleted");
     }
 }

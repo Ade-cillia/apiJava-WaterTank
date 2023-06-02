@@ -3,6 +3,7 @@ package com.example.api.services;
 import com.example.api.dto.RegisterDTO;
 import com.example.api.models.Residence;
 import com.example.api.models.User;
+import com.example.api.models.Weather;
 import com.example.api.repositories.ResidenceRepository;
 import com.example.api.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,39 +21,38 @@ import java.util.Optional;
 @Service
 public class ResidenceService {
     private ResidenceRepository residenceRepository;
-    private ModelMapper modelMapper;
-    private BCryptPasswordEncoder passwordEncoder;
+    private UserRepository userRepository;
 
-    public ResidenceService(ResidenceRepository residenceRepository, ModelMapper modelMapper, BCryptPasswordEncoder passwordEncoder) {
+    public ResidenceService(ResidenceRepository residenceRepository,UserRepository userRepository) {
         this.residenceRepository = residenceRepository;
-        this.modelMapper = modelMapper;
-        this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
     }
 
     public List<Residence> findAll() {
         return residenceRepository.findAll();
     }
-    public List<Residence> findAllByUser(User user) {
+    public Residence findById(Long residenceId) {
+
+        Residence residence = residenceRepository.findById(residenceId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Residence not found with id: " + residenceId));
+        return residence;
+    }
+    public List<Residence> findAllByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId));
         return residenceRepository.findAllByUser(user);
     }
 
-    public Residence saveResidence(Residence residence) {
+    public Residence saveResidence(Long userId, Residence residence) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId));
+        residence.setUser(user);
         return residenceRepository.save(residence);
     }
 
     public Residence updateResidence(Long residenceId, Residence residenceDetails) {
-        return residenceRepository.findById(residenceId)
-                .map(residence -> {
-                    residence.setNbPerson(residenceDetails.getNbPerson());
-                    residence.setType(residenceDetails.getType());
-                    residence.setPrincipal(residenceDetails.isPrincipal());
-                    residence.setAddress(residenceDetails.getAddress());
-                    residence.setPostalCode(residenceDetails.getPostalCode());
-                    residence.setLat(residenceDetails.getLat());
-                    residence.setLon(residenceDetails.getLon());
-                    return residenceRepository.save(residence);
-                })
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Residence not found with id: " + residenceId));
+        Residence residence = residenceRepository.findById(residenceId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Residence not found with id: " + residenceId));
+        residenceDetails.setId(residence.getId());
+        residenceRepository.save(residenceDetails);
+        return residenceDetails;
     }
 
     public void deleteResidenceById(Long residenceId) {
